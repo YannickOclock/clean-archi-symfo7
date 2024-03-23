@@ -6,7 +6,7 @@ namespace App\Domain\User\Service;
 
 use App\Domain\User\Repository\UserRepositoryInterface;
 
-final class UserIsAlreadyRegistered
+class UserIsAlreadyRegistered
 {
     private UserRepositoryInterface $userRepository;
 
