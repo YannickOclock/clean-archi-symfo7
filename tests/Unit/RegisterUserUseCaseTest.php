@@ -126,8 +126,6 @@ class RegisterUserUseCaseTest extends WebTestCase
 
         $registerUserUseCase->execute($registerRequest, $registerResponse, $presenter);
 
-        dump($registerResponse->getViolations());
-
         $this->assertGreaterThan(0, $registerResponse->getViolations());
     }
 }
