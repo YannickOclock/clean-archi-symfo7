@@ -24,9 +24,9 @@ final class RegisterUserUseCase implements RegisterUserUseCaseInterface
 
     public function execute(
         RegisterUserRequest $registerRequest,
+        RegisterUserResponse $registerResponse,
         RegisterUserPresenterInterface $presenter
     ): void {
-        $registerResponse = new RegisterUserResponse();
         $registerResponse->setUser(null);
         $registerResponse->setViolations(null);
         if ($registerRequest->violations) {
