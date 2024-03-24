@@ -10,22 +10,23 @@ use App\Infrastructure\Symfony\Form\RegisterUserType;
 use App\Presentation\User\RegisterUserHtmlViewModel;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Twig\Environment;
 
 #[AllowDynamicProperties] final class RegisterHtmlView
 {
     private Environment $twig;
     private FormFactoryInterface $formFactory;
+    private RequestStack $requestStack;
 
     public function __construct(
         Environment $twig,
         FormFactoryInterface $formFactory,
-        SessionInterface $session
+        RequestStack $requestStack,
     ) {
         $this->twig = $twig;
         $this->formFactory = $formFactory;
-        $this->session = $session;
+        $this->requestStack = $requestStack;
     }
 
     public function generateView(
@@ -36,7 +37,7 @@ use Twig\Environment;
 
             // Code pour mettre en session
             /*foreach ($viewModel->violations as $violation) {
-                $this->session->getFlashBag()->add('error', $violation);
+                $this->requestStack->getSession()->getFlashBag()->add('error', $violation);
             }*/
 
             // Pour rediriger vers une autre page
