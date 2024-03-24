@@ -2,9 +2,10 @@
 
 namespace App\Infrastructure\Symfony\Service;
 
+use App\Domain\Home\Service\SecurityUserInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 
-readonly class SecurityUserService
+readonly class SecurityUserService implements SecurityUserInterface
 {
     public function __construct(private Security $security) {}
 
