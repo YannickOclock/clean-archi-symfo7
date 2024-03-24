@@ -10,9 +10,6 @@ class ShowHomeUseCase implements ShowHomeUseCaseInterface
     public function __construct(private SecurityUserInterface $securityUserService) {}
     public function execute(ShowHomeRequest $request, ShowHomeResponse $response, ShowHomePresenterInterface $presenter): void
     {
-        dump($this->securityUserService->getUserIdentifier());
-        dump($this->securityUserService->getRoles());
-
         $connectedUser = ConnectedUser::createFromUserIdentifier(
             $this->securityUserService->getUserIdentifier(),
             $this->securityUserService->getRoles()
