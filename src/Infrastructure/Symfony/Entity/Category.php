@@ -3,6 +3,8 @@
 namespace App\Infrastructure\Symfony\Entity;
 
 use App\Infrastructure\Symfony\Repository\CategoryRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Types\UuidType;
 use Symfony\Component\Uid\Uuid;
@@ -22,11 +24,22 @@ class Category
     #[ORM\Column]
     private ?bool $active = null;
 
-    #[ORM\Column]
+    #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'subCategories')]
+    private ?self $parent = null;
+
+    #[ORM\OneToMany(targetEntity: self::class, mappedBy: 'parent')]
+    private Collection $subCategories;
+
+    #[ORM\Column(options: ['default' => 'CURRENT_TIMESTAMP'])]
     private ?\DateTimeImmutable $createdAt = null;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $updatedAt = null;
+
+    public function __construct()
+    {
+        $this->subCategories = new ArrayCollection();
+    }
 
     public function getId(): ?Uuid
     {
@@ -57,6 +70,48 @@ class Category
         return $this;
     }
 
+    public function getParent(): ?self
+    {
+        return $this->parent;
+    }
+
+    public function setParent(?self $parent): static
+    {
+        $this->parent = $parent;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, self>
+     */
+    public function getSubCategories(): Collection
+    {
+        return $this->subCategories;
+    }
+
+    public function addSubCategory(self $subCategory): static
+    {
+        if (!$this->subCategories->contains($subCategory)) {
+            $this->subCategories->add($subCategory);
+            $subCategory->setParent($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSubCategory(self $subCategory): static
+    {
+        if ($this->subCategories->removeElement($subCategory)) {
+            // set the owning side to null (unless already changed)
+            if ($subCategory->getParent() === $this) {
+                $subCategory->setParent(null);
+            }
+        }
+
+        return $this;
+    }
+
     public function getCreatedAt(): ?\DateTimeImmutable
     {
         return $this->createdAt;
@@ -79,5 +134,10 @@ class Category
         $this->updatedAt = $updatedAt;
 
         return $this;
+    }
+
+    public function __toString(): string
+    {
+        return $this->name;
     }
 }
