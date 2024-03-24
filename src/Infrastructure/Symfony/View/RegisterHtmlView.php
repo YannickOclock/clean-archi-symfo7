@@ -4,24 +4,28 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Symfony\View;
 
+use AllowDynamicProperties;
 use App\Domain\User\UseCase\Register\RegisterUserRequest;
 use App\Infrastructure\Symfony\Form\RegisterUserType;
 use App\Presentation\User\RegisterUserHtmlViewModel;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Twig\Environment;
 
-final class RegisterHtmlView
+#[AllowDynamicProperties] final class RegisterHtmlView
 {
     private Environment $twig;
     private FormFactoryInterface $formFactory;
 
     public function __construct(
         Environment $twig,
-        FormFactoryInterface $formFactory
+        FormFactoryInterface $formFactory,
+        SessionInterface $session
     ) {
         $this->twig = $twig;
         $this->formFactory = $formFactory;
+        $this->session = $session;
     }
 
     public function generateView(
@@ -29,6 +33,15 @@ final class RegisterHtmlView
         RegisterUserHtmlViewModel $viewModel
     ): Response {
         if (!$viewModel->violations && $registerUserRequest->isPosted) {
+
+            // Code pour mettre en session
+            /*foreach ($viewModel->violations as $violation) {
+                $this->session->getFlashBag()->add('error', $violation);
+            }*/
+
+            // Pour rediriger vers une autre page
+            // return new RedirectResponse($this->urlGenerator->generate('app_home'));
+
             return new Response($this->twig->render(
                 'user/register_complete.html.twig',
                 [
