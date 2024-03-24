@@ -15,7 +15,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\Column(type: UuidType::NAME, unique: true)]
-    private Uuid|null $id = null;
+    private ?Uuid $id = null;
 
     #[ORM\Column(length: 180)]
     private ?string $email = null;

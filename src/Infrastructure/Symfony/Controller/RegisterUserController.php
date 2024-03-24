@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Symfony\Controller;
 
 use App\Domain\User\UseCase\Register\RegisterUserRequest;
+use App\Domain\User\UseCase\Register\RegisterUserResponse;
 use App\Domain\User\UseCase\Register\RegisterUserUseCaseInterface;
 use App\Infrastructure\Symfony\Service\RegisterUserDataValidator;
 use App\Infrastructure\Symfony\View\RegisterHtmlView;
@@ -35,7 +36,7 @@ final class RegisterUserController extends AbstractController
         $this->registerUserDataValidator = $registerUserDataValidator;
     }
 
-    public function __invoke(Request $request, RegisterUserRequest $registerUserRequest): Response
+    public function __invoke(Request $request, RegisterUserRequest $registerUserRequest, RegisterUserResponse $registerUserResponse): Response
     {
 
         $registerUserData = $request->request->all();
@@ -50,7 +51,7 @@ final class RegisterUserController extends AbstractController
             $registerUserRequest->id = Uuid::v4()->toRfc4122();
         }
 
-        $this->registerUseCase->execute($registerUserRequest, $this->presenter);
+        $this->registerUseCase->execute($registerUserRequest, $registerUserResponse, $this->presenter);
 
         return $this->registerView->generateView(
             $registerUserRequest,
