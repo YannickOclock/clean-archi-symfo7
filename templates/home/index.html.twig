@@ -5,18 +5,27 @@
 {% block body %}
     <nav>
         <ul>
-            <li><a href="{{ path('app_home') }}">Home</a></li>
+            <li><a href="{{ path('app_home') }}">Logo (accueil)</a></li>
         </ul>
         <ul>
             {% if viewModel.username %}
                 <li>Welcome {{ viewModel.username }}</li>
-                <li><a href="{{ path('app_logout') }}">Logout</a></li>
+                <li><a href="{{ path('app_logout') }}">Se déconnecter</a></li>
             {% else %}
-                <li><a href="{{ path('app_login') }}">Login</a></li>
-                <li><a href="{{ path('app_register') }}">Register</a></li>
+                <li><a href="{{ path('app_login') }}">Connexion</a></li>
+                <li><a href="{{ path('app_register') }}">Créer un compte</a></li>
             {% endif %}
         </ul>
     </nav>
 
-    <h1>Hello to our new HomePage</h1>
+    <h1>Bienvenue sur le site E-commerce</h1>
+
+    <h2>Menu des catégories</h2>
+    <nav>
+        <ul>
+            {% for menuCategory in viewModel.menuCategories %}
+                <li><a href="">{{ menuCategory.name }}</a></li>
+            {% endfor %}
+        </ul>
+    </nav>
 {% endblock %}

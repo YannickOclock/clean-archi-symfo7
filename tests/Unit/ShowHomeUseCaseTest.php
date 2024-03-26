@@ -3,6 +3,7 @@
 namespace App\Tests\Unit;
 
 use App\Domain\Home\Entity\ConnectedUser;
+use App\Domain\Home\Repository\CategoryRepositoryInterface;
 use App\Domain\Home\Service\SecurityUserInterface;
 use App\Domain\Home\UseCase\ShowHome\ShowHomePresenterInterface;
 use App\Domain\Home\UseCase\ShowHome\ShowHomeRequest;
@@ -26,6 +27,11 @@ class ShowHomeUseCaseTest extends TestCase
             }
         };
 
+        $categoryRepository = $this->createMock(CategoryRepositoryInterface::class);
+        $categoryRepository->expects($this->once())
+            ->method('findAllMenuCategories')
+            ->willReturn(['category1', 'category2']);
+
         $showHomeRequest = new ShowHomeRequest();
         $showHomeResponse = new ShowHomeResponse();
 
@@ -35,7 +41,7 @@ class ShowHomeUseCaseTest extends TestCase
             ->method('present')
             ->with($showHomeResponse);
 
-        $showHomeUseCase = new ShowHomeUseCase($securityUserService);
+        $showHomeUseCase = new ShowHomeUseCase($securityUserService, $categoryRepository);
 
         $showHomeUseCase->execute(
             $showHomeRequest,
@@ -44,5 +50,6 @@ class ShowHomeUseCaseTest extends TestCase
 
         $this->assertEquals('john@doe.fr', $showHomeResponse->getConnectedUser()->getUsername());
         $this->assertEquals(['ROLE_USER'], $showHomeResponse->getConnectedUser()->getRoles());
+        $this->assertEquals(['category1', 'category2'], $showHomeResponse->getMenuCategories());
     }
 }
