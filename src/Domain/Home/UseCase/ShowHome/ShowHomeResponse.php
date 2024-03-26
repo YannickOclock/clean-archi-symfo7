@@ -7,7 +7,7 @@ namespace App\Domain\Home\UseCase\ShowHome;
 
 use App\Domain\Home\Entity\ConnectedUser;
 
-final class ShowHomeResponse
+class ShowHomeResponse
 {
     private ?ConnectedUser $connectedUser;
 

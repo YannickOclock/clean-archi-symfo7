@@ -17,7 +17,7 @@ class UserIsAlreadyRegistered
 
     public function isSatisfiedBy(string $email): bool
     {
-        $user = $this->userRepository->findOneBy(['email' => $email]);
+        $user = $this->userRepository->findOneByEmail($email);
 
         return $user !== null;
     }
