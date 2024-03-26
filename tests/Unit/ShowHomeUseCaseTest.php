@@ -2,7 +2,7 @@
 
 namespace App\Tests\Unit;
 
-use App\Domain\Home\Entity\ConnectedUser;
+use App\Domain\Cart\Service\CartInterface;
 use App\Domain\Home\Repository\CategoryRepositoryInterface;
 use App\Domain\Home\Service\SecurityUserInterface;
 use App\Domain\Home\UseCase\ShowHome\ShowHomePresenterInterface;
@@ -32,17 +32,20 @@ class ShowHomeUseCaseTest extends TestCase
             ->method('findAllMenuCategories')
             ->willReturn(['category1', 'category2']);
 
+        $cartService = $this->createMock(CartInterface::class);
+        $cartService->expects($this->once())
+            ->method('getProductsCount')
+            ->willReturn(1);
+
         $showHomeRequest = new ShowHomeRequest();
         $showHomeResponse = new ShowHomeResponse();
 
         $presenter = $this->createMock(ShowHomePresenterInterface::class);
-
         $presenter->expects($this->once())
             ->method('present')
             ->with($showHomeResponse);
 
-        $showHomeUseCase = new ShowHomeUseCase($securityUserService, $categoryRepository);
-
+        $showHomeUseCase = new ShowHomeUseCase($securityUserService, $categoryRepository, $cartService);
         $showHomeUseCase->execute(
             $showHomeRequest,
             $showHomeResponse,
@@ -51,5 +54,6 @@ class ShowHomeUseCaseTest extends TestCase
         $this->assertEquals('john@doe.fr', $showHomeResponse->getConnectedUser()->getUsername());
         $this->assertEquals(['ROLE_USER'], $showHomeResponse->getConnectedUser()->getRoles());
         $this->assertEquals(['category1', 'category2'], $showHomeResponse->getMenuCategories());
+        $this->assertEquals(1, $showHomeResponse->getCartProductsCount());
     }
 }

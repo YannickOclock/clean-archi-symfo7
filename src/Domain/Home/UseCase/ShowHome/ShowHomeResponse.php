@@ -11,6 +11,7 @@ class ShowHomeResponse
 {
     private array $menuCategories;
     private ?ConnectedUser $connectedUser;
+    private int $cartProductsCount;
 
     public function getMenuCategories(): array
     {
@@ -30,5 +31,14 @@ class ShowHomeResponse
     public function setConnectedUser(?ConnectedUser $connectedUser): void
     {
         $this->connectedUser = $connectedUser;
+    }
+
+    public function setCartProductsCount(int $cartProductsCount): void
+    {
+        $this->cartProductsCount = $cartProductsCount;
+    }
+    public function getCartProductsCount(): int
+    {
+        return $this->cartProductsCount;
     }
 }

@@ -19,6 +19,8 @@ final class ShowHomeHtmlPresenter implements ShowHomePresenterInterface
         $this->viewModel->username = $response->getConnectedUser()?->getUsername();
         $this->viewModel->roles = $response->getConnectedUser()?->getRoles();
         $this->viewModel->menuCategories = $response->getMenuCategories();
+
+        $this->viewModel->cartProductsCount = $response->getCartProductsCount();
     }
 
     public function viewModel(): ShowHomeHtmlViewModel
