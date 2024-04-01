@@ -4,43 +4,135 @@
 {% block breadcrumb %}{{ parent() }} Produits {% endblock %}
 
 {% block header %}<h1>Liste des produits</h1>{% endblock %}
-{% block body_title %}Liste des produits ({{ products|length }}){% endblock %}
+{% block body_title %}Liste des produits ({{ products.total is defined ? products.total : '0' }}){% endblock %}
 
 {% block body %}
+    <div class="relative">
+        <button class="btn btn-bulk-action">
+            Actions groupées
+            <i class="material-icons">expand_more</i>
+        </button>
+        <div class="dropdown bulk-dropdown">
+            <a 
+                href="#" 
+                class="btn btn-delete"
+                {# action à déclencher (dans le back) #}
+                data-href="{{ path('admin_products_api_multi_delete_product') }}" 
+                data-action="PUT" 
+                data-token="{{ csrf_token('apiMultiDeleteProduct') }}"
+            >
+                <i class="material-icons">delete</i> 
+                Supprimer la sélection
+            </a>
+        </div>
+    </div>
     <table class="table">
         <thead>
             <tr>
+                <th></th>
                 <th>ID</th>
                 <th>Photo</th>
                 <th>Nom</th>
+                <th>Slug</th>
                 <th>Prix</th>
                 <th>Stock</th>
+                <th>En ligne</th>
                 <th>Catégorie</th>
                 <th>Actions</th>
             </tr>
         </thead>
         <tbody>
-            {% for product in products %}
-                <tr>
-                    <td>{{ product.id }}</td>
-                    <td>
-                        <img 
-                            height="100" 
-                            src="{{ asset('assets/uploads/products/mini/300x300-' ~ product.images[0].name) }}" 
-                            class="card-img-top" 
-                            alt="{{ product.name }}" />
-                    </td>
-                    <td>{{ product.name }}</td>
-                    <td>{{ product.price / 100 }} €</td>
-                    <td>{{ product.stock }}</td>
-                    <td>{{ product.category.name }}</td>
-                    <td>
-                        <a href="{{ path('admin_products_edit', {id: product.id }) }}" class="btn btn-success">
-                            <i class="material-icons">edit</i>
-                        </a>
-                    </td>
-                </tr>
-            {% endfor %}
+            {% if products.data is defined %}
+                {% for product in products.data %}
+                    <tr data-id="{{ product.id }}">
+                        <td>
+                            <div class="checkbox-js">
+                                <div class="bulk"></div>
+                            </div>
+                        </td>
+                        <td>{{ product.id }}</td>
+                        <td>
+                            <img 
+                                height="100" 
+                                src="{{ asset('assets/uploads/products/mini/250x250-' ~ product.images[0].name) }}" 
+                                class="card-img-top" 
+                                alt="{{ product.name }}" />
+                        </td>
+                        <td>{{ product.name }}</td>
+                        <td>{{ product.slug }}</td>
+                        <td>{{ (product.price / 100)|number_format(2) }}&nbsp;€</td>
+                        <td>{{ product.stock }}</td>
+                        <td>
+                            <div class="form-check form-switch">
+                                <input 
+                                    class="form-check-input" 
+                                    type="checkbox" 
+                                    role="switch" 
+                                    id="switch{{ product.id }}" 
+                                    {{ product.published ? "checked" : "" }} 
+                                    disabled
+                                    {# action à déclencher (dans le back) #}
+                                    data-href="{{ path('admin_products_edit_is_published', {id: product.id}) }}" 
+                                    data-action="PUT" 
+                                    data-token="{{ csrf_token('editProductPublished' ~ product.id) }}"
+                                >
+                                <label class="form-check-label" for="switch{{ product.id }}"></label>
+                            </div>
+                        </td>
+                        <td>{{ product.category.name }}</td>
+                        <td class="td-flex">
+                            <a href="{{ path('admin_products_edit', {id: product.id }) }}" class="btn">
+                                <i class="material-icons">edit</i>
+                            </a>
+                            <a href="" class="btn btn-dropdown">
+                                <i class="material-icons">more_vert</i>
+                            </a>
+                            <div class="dropdown">
+                                <a 
+                                    href="#" 
+                                    class="btn btn-delete"
+                                    {# action à déclencher (dans le back) #}
+                                    data-href="{{ path('admin_products_api_delete_product', {id: product.id}) }}" 
+                                    data-action="PUT" 
+                                    data-token="{{ csrf_token('apiDeleteProduct' ~ product.id) }}"
+                                >
+                                    <i class="material-icons">delete</i> 
+                                    Supprimer
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr><td colspan="9">Il n'y a aucun produit dans la base !</td></tr>
+            {% endif %}
         </tbody>
     </table>
+    {% if products.data is defined %}
+        {% set path = 'admin_products_index' %}
+        {% set pages = products.pages %}
+        {% set currentPage = products.page %}
+        {% include "admin/_partials/_admin_pagination.html.twig" %}
+    {% endif %}
+    <script>
+        const disabledLinks = document.querySelectorAll('.pagination .page-item.disabled');
+        for(const link of disabledLinks) {
+            link.addEventListener('click', (e) => { e.preventDefault(); })
+        }
+    </script>
+{% endblock %}
+
+{% block scripts %}
+    {{ parent() }}
+
+    {# Link spécifique à la création des checkbox slide #}
+    <script src="{{ asset('assets/admin/js/api/updateAction.js') }}" defer></script>
+    <script src="{{ asset('assets/admin/js/components/checkboxToSwitchBtn.js') }}" defer></script>
+
+    {# Link spécifique à l'action sur les bulk checkbox (checkbox à sélection multiple) #}
+    <script src="{{ asset('assets/admin/js/components/actionGroupBtn.js') }}" defer></script>
+
+    {# Link spécifique pour les liens d'actions / Pour afficher le bouton de suppression (menu déroulant) #}
+    <script src="{{ asset('assets/admin/js/components/toggleTableLineDropdown.js') }}" defer></script>
+    <script src="{{ asset('assets/admin/js/components/useDeleteBtn.js') }}" defer></script>
 {% endblock %}

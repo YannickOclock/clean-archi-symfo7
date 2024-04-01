@@ -17,8 +17,11 @@
 
 {% block scripts %}
     {{ parent() }}
-    {# Link externe - nice select 2 (partie JS) #}
-    <script src="{{ asset('assets/admin/js/nice-select2.js') }}" defer></script>
+   {# Link externe - nice select 2 (partie JS) #}
+    <script src="{{ asset('assets/admin/js/utils/nice-select2.js') }}" defer></script>
     {# Link spécifique pour le select du form #}
-    <script src="{{ asset('assets/admin/js/select2-use.js') }}" defer></script>
+    <script src="{{ asset('assets/admin/js/utils/select2-use.js') }}" defer></script>
+    {# Link spécifique à la création des checkbox slide #}
+    <script src="{{ asset('assets/admin/js/api/updateAction.js') }}" defer></script>
+    <script src="{{ asset('assets/admin/js/components/checkboxToSwitchBtn.js') }}" defer></script>
 {% endblock %}

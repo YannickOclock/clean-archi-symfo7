@@ -5,6 +5,7 @@ namespace App\Infrastructure\Symfony\Entity;
 use App\Infrastructure\Symfony\Entity\Trait\CreatedAtTrait;
 use App\Infrastructure\Symfony\Entity\Trait\UpdatedAtTrait;
 use App\Infrastructure\Symfony\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Types\UuidType;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -47,6 +48,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 100)]
     private ?string $resetToken = null;
+
+    public function __construct()
+    {
+        $this->created_at = new \DateTimeImmutable();
+    }
 
     public function setId(Uuid $id): static
     {

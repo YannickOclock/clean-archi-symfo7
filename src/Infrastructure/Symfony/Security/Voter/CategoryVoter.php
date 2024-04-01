@@ -2,16 +2,16 @@
 
 namespace App\Infrastructure\Symfony\Security\Voter;
 
-use App\Infrastructure\Symfony\Entity\User;
+use App\Infrastructure\Symfony\Entity\Category;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-class UserVoter extends Voter
+class CategoryVoter extends Voter
 {
-    public const EDIT = 'USER_EDIT';
-    public const DELETE = 'USER_DELETE';
+    public const EDIT = 'CATEGORY_EDIT';
+    public const DELETE = 'CATEGORY_DELETE';
 
     private Security $security;
 
@@ -20,18 +20,18 @@ class UserVoter extends Voter
         $this->security = $security;
     }
 
-    protected function supports(string $attribute, $user): bool
+    protected function supports(string $attribute, $category): bool
     {
         if(!in_array($attribute, [self::EDIT, self::DELETE])) {
             return false;
         }
-        if(!$user instanceof User) {
+        if(!$category instanceof Category) {
             return false;
         }
         return true;
     }
 
-    protected function voteOnAttribute(string $attribute, $use, TokenInterface $token): bool
+    protected function voteOnAttribute(string $attribute, $category, TokenInterface $token): bool
     {
         $user = $token->getUser();
 
@@ -45,10 +45,10 @@ class UserVoter extends Voter
         switch($attribute) {
             case self::EDIT:
                 return $this->canEdit();
+                break;
             case self::DELETE:
                 return $this->canDelete();
-            default:
-                return false;
+                break;
         }
     }
 

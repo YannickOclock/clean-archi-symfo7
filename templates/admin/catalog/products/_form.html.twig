@@ -4,6 +4,7 @@
     {{ form_row(productForm.category) }}
     {{ form_row(productForm.price) }}
     {{ form_row(productForm.stock) }}
+    {{ form_row(productForm.published) }}
     {{ form_row(productForm.images) }}
 
     {# On affiche les images si on est en édition #}
@@ -13,7 +14,7 @@
             {% for image in product.images %}
                 <div class='form-images-image'>
                     <img 
-                        src="{{ asset('assets/uploads/products/mini/300x300-' ~ image.name) }}" 
+                        src="{{ asset('assets/uploads/products/mini/250x250-' ~ image.name) }}" 
                         alt="Image" 
                         class="border border-secondary"
                     >

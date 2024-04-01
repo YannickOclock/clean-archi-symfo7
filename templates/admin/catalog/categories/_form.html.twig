@@ -1,0 +1,29 @@
+{{ form_start(categoryForm) }}
+    {{ form_row(categoryForm.name) }}
+    {{ form_row(categoryForm.description) }}
+
+    {{ form_row(categoryForm.image) }}
+
+    {# On affiche les images si on est en édition #}
+    {% if app.request.attributes.get('_route') == 'admin_categories_edit' %}
+        <h2 class="form-title-images">Photos de la catégorie</h2>
+        <div class='form-images'>
+            {% if category.imageName is not null %}
+                {% set image = category.imageName %}
+                <div class='form-images-image'>
+                    <img 
+                        src="{{ asset('assets/uploads/categories/mini/250x250-' ~ category.imageName) }}" 
+                        alt="Image" 
+                        class="border border-secondary"
+                    >
+                </div>
+            {% else %}
+                <div>Aucune image uploadée !</div>
+            {% endif %}
+        </div>
+    {% endif %}
+
+    {{ form_row(categoryForm.parent) }}
+    {{ form_row(categoryForm.active) }}
+    <button type="submit" class="btn btn-primary my-2">{{ button_label|default('Ajouter') }}</button>
+{{ form_end(categoryForm) }}

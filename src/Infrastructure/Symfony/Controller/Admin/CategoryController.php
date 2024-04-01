@@ -3,10 +3,10 @@
 namespace App\Infrastructure\Symfony\Controller\Admin;
 
 use App\Infrastructure\Symfony\Controller\Admin\Trait\BreadcrumbTrait;
-use App\Entity\Category;
-use App\Form\CategoryFormType;
+use App\Infrastructure\Symfony\Entity\Category;
+use App\Infrastructure\Symfony\Form\Admin\CategoryFormType;
 use App\Infrastructure\Symfony\Repository\CategoryRepository;
-use App\Service\PictureService;
+use App\Infrastructure\Symfony\Service\Admin\PictureService;
 use Doctrine\ORM\EntityManagerInterface;
 use PhpParser\Node\Scalar\String_;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -36,6 +36,7 @@ class CategoryController extends AbstractController
     {
         $page = $request->query->getInt('page', 1);
         $categories = $categoryRepository->findSubCategoriesPaginated($category->getId(), $page, 50);
+        dump($categories);
         $categories['breadcrumbs'] = $this->getBreadCrumbs($categories["data"][0]);
         return $this->render('admin/catalog/categories/index.html.twig', [
             'categories' => $categories
@@ -43,7 +44,7 @@ class CategoryController extends AbstractController
     }
 
     #[Route('/ajout', name: 'add')]
-    public function add(Request $request, EntityManagerInterface $em, SluggerInterface $slugger, CategoryRepository $categoryRepository): Response
+    public function add(Request $request, EntityManagerInterface $em, SluggerInterface $slugger, CategoryRepository $categoryRepository, PictureService $pictureService): Response
     {
         // uniquement autorisé pour les administrateurs
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
@@ -55,6 +56,12 @@ class CategoryController extends AbstractController
         $categoryForm = $this->createForm(CategoryFormType::class, $category);
         $categoryForm->handleRequest($request);
         if($categoryForm->isSubmitted() && $categoryForm->isValid()) {
+            // On récupère l'image de la catégorie
+            $image = $categoryForm->get('image')->getData();
+            // upload de l'image
+            $folder = 'categories';
+            $fichier = $pictureService->add($image, $folder, 250, 250);
+            $category->setImageName($fichier);
             // on génère le slug
             $slug = $slugger->slug($category->getName());
             $slug = strtolower($slug);
@@ -67,10 +74,10 @@ class CategoryController extends AbstractController
             //dd($parent);
             if($parent !== null) {
                 // on va chercher les sous catégories (pour chercher le dernier de la liste)
-                $subCategories = $categoryRepository->findByParent($parent);
+                $subCategories = $categoryRepository->findBy(['parent' => $parent]);
                 foreach($subCategories as $subCategory) {
-                    if($subCategory->getCategoryOrder() > $categoryOrder) {
-                        $categoryOrder = $subCategory->getCategoryOrder();
+                    if($subCategory->getOrder() > $categoryOrder) {
+                        $categoryOrder = $subCategory->getOrder();
                     }
                 }
                 // si on a trouvé des catégories, on incrémente la position
@@ -78,22 +85,22 @@ class CategoryController extends AbstractController
                     $categoryOrder++;
                 } else {
                     // TODO: à garder juste pour les tests (partie à supprimer)
-                    $categoryOrder = $parent->getCategoryOrder() + 1;
+                    $categoryOrder = $parent->getOrder() + 1;
                 }
             } else {
                 // on va chercher la dernière catégorie de niveau 1 rajoutée
                 // npCategory => no parent category
                 $npCategories = $categoryRepository->findBy(['parent' => null]);
                 foreach($npCategories as $npCategory) {
-                    if($npCategory->getCategoryOrder() > $categoryOrder) {
-                        $categoryOrder = $npCategory->getCategoryOrder();
+                    if($npCategory->getOrder() > $categoryOrder) {
+                        $categoryOrder = $npCategory->getOrder();
                     }
                 }
                 // si on a trouvé des catégories sans parent, on incrémente la position
                 // TODO: à garder juste pour les tests en dev (10 à remplacer par 1)
                 $categoryOrder = ($categoryOrder > 1) ? $categoryOrder + 10 : 10;
             }
-            $category->setCategoryOrder($categoryOrder);
+            $category->setOrder($categoryOrder);
 
             // On stocke les informations
             $em->persist($category);
@@ -108,6 +115,9 @@ class CategoryController extends AbstractController
         ]);
     }
 
+    /**
+     * @throws \Exception
+     */
     #[Route('/edition/{id}', name: 'edit')]
     public function edit(Category $category, Request $request, EntityManagerInterface $em, SluggerInterface $slugger, PictureService $pictureService): Response
     {
@@ -128,6 +138,8 @@ class CategoryController extends AbstractController
             $slug = $slugger->slug($category->getName());
             $slug = strtolower($slug);
             $category->setSlug($slug);
+            // On met à jour la date de modification
+            $category->setUpdatedAt(new \DateTimeImmutable());
             // On stocke les informations
             $em->persist($category);
             $em->flush();
@@ -142,6 +154,20 @@ class CategoryController extends AbstractController
         ]);
     }
 
+    private function setCategoryActive(Category $category, EntityManagerInterface $em, bool $active): void
+    {
+        // On change la valeur active de la catégorie
+        $category->setActive($active);
+        // On met à jour la date de modification
+        $category->setUpdatedAt(new \DateTimeImmutable());
+
+        $em->persist($category);
+        $em->flush();
+        foreach($category->getSubCategories() as $subCategory) {
+            $this->setCategoryActive($subCategory, $em, $active);
+        }
+    }
+
     #[Route('/edition/en_ligne/{id}', name: 'edit_is_published', methods: ['PUT'])]
     public function togglePublished(Category $category, Request $request, EntityManagerInterface $em): JsonResponse
     {
@@ -151,19 +177,19 @@ class CategoryController extends AbstractController
         if($this->isCsrfTokenValid('editPublished' . $category->getId(), $data['_token'])) {
             // le token csrf est valide
             // on mets à jour le paramètre isVerified
-            $isPublished = $category->isPublished();
-            $category->setPublished(!$isPublished);
+            $isActive = $category->isActive();
+            $category->setActive(!$isActive);
 
-            // S'il y a des catégories enfants, il faut aussi changer le statut des catégories enfant
-            foreach($category->getCategories() as $subCategory) {
-                $subCategory->setPublished(!$isPublished);
-                $em->persist($subCategory);
-            }
+            // S'il y a des catégories enfants, il faut aussi changer le statut des catégories enfants
+            $this->setCategoryActive($category, $em, !$isActive);
+
+            // On met à jour la date de modification
+            $category->setUpdatedAt(new \DateTimeImmutable());
 
             $em->persist($category);
             $em->flush();
 
-            $actionTxt = (!$isPublished) ? 'activée' : 'désactivée';
+            $actionTxt = (!$isActive) ? 'activée' : 'désactivée';
             $messageTxt = "Catégorie {$category->getId()} {$actionTxt} avec succès !";
 
             return new JsonResponse(['success' => true, "message" => $messageTxt], 200);
@@ -172,7 +198,7 @@ class CategoryController extends AbstractController
         return new JsonResponse(['error' => 'Token invalide'], 400);
     }
 
-    #[Route('/change/position/{id}/{position}', name: 'change_position', methods: ['PUT'], requirements: ["position" => "up|down"])]
+    #[Route('/change/position/{id}/{position}', name: 'change_position', requirements: ["position" => "up|down"], methods: ['PUT'])]
     public function changePosition(Category $category, String $position, Request $request, CategoryRepository $categoryRepository, EntityManagerInterface $em): JsonResponse
     {
         // On récupère le contenu de la requête
@@ -183,18 +209,21 @@ class CategoryController extends AbstractController
             // on mets à jour le paramètre isVerified
             // todo il faut coder la partie changement de position
 
-            $categoryOrder = $category->getCategoryOrder();
+            $categoryOrder = $category->getOrder();
             $categoryParent = $category->getParent()?->getId();
 
             $nextCategories = $categoryRepository->findPreviousOrNextCategoryInSameLevel($position, $categoryOrder, $categoryParent);
             $nextOrPreviousCategory = $nextCategories[0];
 
             // sauvegarde de l'ancienne position
-            $categoryOrderTmp = $category->getCategoryOrder();
+            $categoryOrderTmp = $category->getOrder();
+
+            // On met à jour la date de modification
+            $category->setUpdatedAt(new \DateTimeImmutable());
 
             // mise à jour des positions
-            $category->setCategoryOrder($nextOrPreviousCategory->getCategoryOrder());
-            $nextOrPreviousCategory->setCategoryOrder($categoryOrderTmp);
+            $category->setOrder($nextOrPreviousCategory->getOrder());
+            $nextOrPreviousCategory->setOrder($categoryOrderTmp);
             $em->persist($category);
             $em->persist($nextOrPreviousCategory);
             $em->flush();
@@ -208,9 +237,9 @@ class CategoryController extends AbstractController
                     "message" => $messageTxt,
                     "position" => $position,
                     "nextOrPreviousCategoryId" => $nextOrPreviousCategory->getId(),
-                    "nextOrPreviousCategoryOrder" => $nextOrPreviousCategory->getCategoryOrder(),
+                    "nextOrPreviousCategoryOrder" => $nextOrPreviousCategory->getOrder(),
                     "categoryId" => $category->getId(),
-                    "categoryOrder" => $category->getCategoryOrder(),
+                    "categoryOrder" => $category->getOrder(),
                 ],
                 200
             );

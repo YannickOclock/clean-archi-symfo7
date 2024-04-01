@@ -16,9 +16,12 @@
             </a>
         </li>
         <li class="category-title"><span class="title">Vendre</span></li>
-        <li 
-            class="
+        <li
+                class="
                 link-levelone
+                {% if currentPath in ['admin_products_index', 'admin_products_add', 'admin_categories_index'] %}
+                    link-active
+                {% endif %}
             "
         >
             <a href="#">
@@ -28,8 +31,8 @@
             <ul class="submenu">
                 <li class="link-level-two"><a>Produits</a></li>
                 <li class="link-level-two"><a>Ajouter un produit</a></li>
-                <li class="link-level-two"><a>Catégories</a></li>
-                <li class="link-level-two"><a>Ajouter une catégorie</a></li>
+                <li class="link-level-two"><a href="{{ path('admin_categories_index') }}" class="{{ currentPath in ['admin_categories_index', 'admin_categories_sub_index'] ? "link-active" }}">Catégories</a></li>
+                <li class="link-level-two"><a href="{{ path('admin_categories_add') }}" class="{{ currentPath == 'admin_categories_add' ? "link-active" }}">Ajouter une catégorie</a></li>
             </ul>
         </li>
         <li

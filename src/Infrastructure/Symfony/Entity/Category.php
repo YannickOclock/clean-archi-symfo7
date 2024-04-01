@@ -32,7 +32,7 @@ class Category
     private ?bool $active = null;
 
     #[ORM\Column]
-    private ?int $order = null;
+    private ?int $orderMenu = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
@@ -44,11 +44,12 @@ class Category
     private ?self $parent = null;
 
     #[ORM\OneToMany(targetEntity: self::class, mappedBy: 'parent')]
-    #[ORM\OrderBy(["order" => "ASC"])]
+    #[ORM\OrderBy(["orderMenu" => "ASC"])]
     private Collection $subCategories;
 
     public function __construct()
     {
+        $this->created_at = new \DateTimeImmutable();
         $this->subCategories = new ArrayCollection();
     }
 
@@ -83,12 +84,12 @@ class Category
 
     public function getOrder(): ?int
     {
-        return $this->order;
+        return $this->orderMenu;
     }
 
     public function setOrder(?int $order): Category
     {
-        $this->order = $order;
+        $this->orderMenu = $order;
         return $this;
     }
 

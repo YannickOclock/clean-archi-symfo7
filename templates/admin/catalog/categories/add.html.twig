@@ -1,13 +1,13 @@
 {% extends 'admin/catalog/_breadcrumb.html.twig' %}
 
-{% block title %}{{ parent() }} - Modifier un produit{% endblock %}
-{% block breadcrumb %}{{ parent() }} Produits &gt; Modifier un produit{% endblock %}
+{% block title %}{{ parent() }} - Ajouter une catégorie{% endblock %}
+{% block breadcrumb %}{{ parent() }} Produits &gt; Nouvelle catégorie{% endblock %}
 
-{% block header %}<h1>Modifier un produit</h1>{% endblock %}
-{% block body_title %}Modification du produit n°{{ product.id }}{% endblock %}
+{% block header %}<h1>Ajouter une catégorie</h1>{% endblock %}
+{% block body_title %}Ajouter un catégorie{% endblock %}
 
 {% block body %}
-    {% include "admin/catalog/products/_form.html.twig" with {button_label: "Modifier"} %}
+    {% include "admin/catalog/categories/_form.html.twig" %}
 {% endblock %}
 
 {% block stylesheets %}
@@ -24,7 +24,4 @@
     {# Link spécifique à la création des checkbox slide #}
     <script src="{{ asset('assets/admin/js/api/updateAction.js') }}" defer></script>
     <script src="{{ asset('assets/admin/js/components/checkboxToSwitchBtn.js') }}" defer></script>
-    {# Link spécifique pour la suppression des images #}
-    <script src="{{ asset('assets/admin/js/components/deleteImageAction.js')}}" defer></script>
 {% endblock %}
-
