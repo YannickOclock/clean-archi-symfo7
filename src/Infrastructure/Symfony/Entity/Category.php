@@ -2,6 +2,8 @@
 
 namespace App\Infrastructure\Symfony\Entity;
 
+use App\Infrastructure\Symfony\Entity\Trait\CreatedAtTrait;
+use App\Infrastructure\Symfony\Entity\Trait\UpdatedAtTrait;
 use App\Infrastructure\Symfony\Repository\CategoryRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -12,6 +14,8 @@ use Symfony\Component\Uid\Uuid;
 #[ORM\Entity(repositoryClass: CategoryRepository::class)]
 class Category
 {
+    use CreatedAtTrait;
+    use UpdatedAtTrait;
     #[ORM\Id]
     #[ORM\Column(type: UuidType::NAME, unique: true)]
     #[ORM\GeneratedValue(strategy: 'CUSTOM')]
@@ -29,12 +33,6 @@ class Category
 
     #[ORM\OneToMany(targetEntity: self::class, mappedBy: 'parent')]
     private Collection $subCategories;
-
-    #[ORM\Column(options: ['default' => 'CURRENT_TIMESTAMP'])]
-    private ?\DateTimeImmutable $createdAt = null;
-
-    #[ORM\Column(nullable: true)]
-    private ?\DateTimeImmutable $updatedAt = null;
 
     public function __construct()
     {
@@ -108,30 +106,6 @@ class Category
                 $subCategory->setParent(null);
             }
         }
-
-        return $this;
-    }
-
-    public function getCreatedAt(): ?\DateTimeImmutable
-    {
-        return $this->createdAt;
-    }
-
-    public function setCreatedAt(\DateTimeImmutable $createdAt): static
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
-    public function getUpdatedAt(): ?\DateTimeImmutable
-    {
-        return $this->updatedAt;
-    }
-
-    public function setUpdatedAt(\DateTimeImmutable $updatedAt): static
-    {
-        $this->updatedAt = $updatedAt;
 
         return $this;
     }

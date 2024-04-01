@@ -2,6 +2,8 @@
 
 namespace App\Infrastructure\Symfony\Entity;
 
+use App\Infrastructure\Symfony\Entity\Trait\CreatedAtTrait;
+use App\Infrastructure\Symfony\Entity\Trait\UpdatedAtTrait;
 use App\Infrastructure\Symfony\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Types\UuidType;
@@ -13,6 +15,8 @@ use Symfony\Component\Uid\Uuid;
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
+    use CreatedAtTrait;
+    use UpdatedAtTrait;
     #[ORM\Id]
     #[ORM\Column(type: UuidType::NAME, unique: true)]
     private ?Uuid $id = null;

@@ -20,7 +20,7 @@ class UsersController extends AbstractController
     public function index(UserRepository $userRepository, Request $request): Response
     {
         $page = $request->query->getInt('page', 1);
-        $users = $userRepository->findUsersPaginated($page, 1);
+        $users = $userRepository->findUsersPaginated($page, 10);
 
         return $this->render('admin/clients/users/index.html.twig', [
             'users' => $users
@@ -46,6 +46,7 @@ class UsersController extends AbstractController
             }
 
             // On stocke les informations
+            $user->setUpdatedAt(new \DateTimeImmutable());
             $em->persist($user);
             $em->flush();
 
@@ -70,6 +71,7 @@ class UsersController extends AbstractController
             // on mets à jour le paramètre isVerified
             $isVerified = $user->isVerified();
             $user->setIsVerified(!$isVerified);
+            $user->setUpdatedAt(new \DateTimeImmutable());
             $em->persist($user);
             $em->flush();
 
