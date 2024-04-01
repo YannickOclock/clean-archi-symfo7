@@ -1,0 +1,42 @@
+{% extends 'admin/catalog/_breadcrumb.html.twig' %}
+
+{% block title %}{{ parent() }} - Liste des catégories{% endblock %}
+{% block breadcrumb %}{{ parent() }} Catégories{% endblock %}
+
+{% block header %}<h1>Liste des catégories</h1>{% endblock %}
+{% block body_title %}Liste des catégories ({{ categories|length }}){% endblock %}
+
+{% block body %}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nom</th>
+                <th>Parent</th>
+                <th>Slug</th>
+                <th>Ordre</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for categorie in categories %}
+                <tr>
+                    <td>{{ categorie.id }}</td>
+                    <td>{{ categorie.name }}</td>
+                    <td>
+                        {% if categorie.parent is not null %}
+                            {{ categorie.parent.name }}
+                        {% endif %}
+                    </td>
+                    <td>{{ categorie.slug }}</td>
+                    <td>{{ categorie.categoryOrder }}</td>
+                    <td>
+                        <a href="#" class="btn btn-success">
+                            <i class="material-icons">edit</i>
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

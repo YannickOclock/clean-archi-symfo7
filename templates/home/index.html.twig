@@ -30,8 +30,17 @@
     <nav>
         <ul>
             {% for menuCategory in viewModel.menuCategories %}
-                <li><a href="">{{ menuCategory.name }}</a></li>
+                <li><a href=""><input type="text" disabled value="{{ menuCategory.name }}" /></a></li>
             {% endfor %}
+            <details class="dropdown">
+                <summary>Accessoires</summary>
+                <ul>
+                    <li><a href="#">Vêtements</a></li>
+                    <li><a href="#">Sacs</a></li>
+                    <li><a href="#">Bijoux</a></li>
+                    <li><a href="#">Parapluies</a></li>
+                </ul>
+            </details>
         </ul>
     </nav>
 {% endblock %}

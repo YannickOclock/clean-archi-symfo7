@@ -1,0 +1,10 @@
+{{ form_start(userForm) }}
+    {{ form_row(userForm.email) }}
+    {{ form_row(userForm.plainPassword) }}
+    {{ form_row(userForm.firstname) }}
+    {{ form_row(userForm.lastname) }}
+    {{ form_row(userForm.roles) }}
+    {{ form_row(userForm.isVerified) }}
+
+    <button type="submit" class="btn btn-primary my-2">{{ button_label|default('Ajouter') }}</button>
+{{ form_end(userForm) }}

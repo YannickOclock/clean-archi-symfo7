@@ -32,6 +32,7 @@ readonly class ShowHomeUseCase implements ShowHomeUseCaseInterface
 
         // Partie panier
 
+        $this->cartService->createCart();
         $cartProductsCount = $this->cartService->getProductsCount();
         $response->setCartProductsCount($cartProductsCount);
 

@@ -1,0 +1,81 @@
+{% if pages > 1 %}
+    <div class="page">
+        {% if currentPage < pages %}
+            {% set max = currentPage * entity.limit %}
+        {% else %}
+            {% set max = entity.total %}
+        {% endif %}
+        <p>Affichage {{ (currentPage - 1) * entity.limit + 1 }}-{{ max }} de {{ entity.total }} {{ entity_label }}(s)</p>
+    </div>
+    <nav>
+        <ul class="pagination">
+            {% if currentPage > 1 %}
+                <li class="page-item">
+                    <a href="{{ path(path, {page: currentPage - 1}) }}" class="page-link">&lt;</a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <a href="{{ path(path, {page: currentPage - 1}) }}" class="page-link">&lt;</a>
+                </li>
+            {% endif %}
+
+            {% if pages > 4 %}
+                {% if currentPage < 4 %}
+                    {# Afficher les 4 premières pages #}
+                    {% for page in 1..4 %}
+                        <li class="page-item {{ page == currentPage ? 'active' }}">
+                            <a href="{{ path(path, {page: page}) }}" class="page-link">{{ page }}</a>
+                        </li>
+                    {% endfor %}
+                    {# Afficher les trois petits points #}
+                    <li class="page-item">...</li>
+                    <li class="page-item">
+                        <a href="{{ path(path, {page: pages}) }}" class="page-link">{{ pages }}</a>
+                    </li>
+                {% else %}
+                    {# Afficher uniquement la page 1 #}
+                    <li class="page-item">
+                        <a href="{{ path(path, {page: '1'}) }}" class="page-link">1</a>
+                    </li>
+                    {# Afficher les trois petits points #}
+                    <li class="page-item">...</li>
+                    {% if currentPage < (pages - 3) %}
+                        {# Afficher soit les trois pages du milieu #}
+                        {% for page in (currentPage - 1)..(currentPage + 1) %}
+                            <li class="page-item {{ page == currentPage ? 'active' }}">
+                                <a href="{{ path(path, {page: page}) }}" class="page-link">{{ page }}</a>
+                            </li>
+                        {% endfor %}
+                        <li class="page-item">...</li>
+                        <li class="page-item">
+                            <a href="{{ path(path, {page: pages}) }}" class="page-link">{{ pages }}</a>
+                        </li>
+                    {% else %}
+                        {# Ou les 4 dernières pages #}
+                        {% for page in (pages - 3)..(pages) %}
+                            <li class="page-item {{ page == currentPage ? 'active' }}">
+                                <a href="{{ path(path, {page: page}) }}" class="page-link">{{ page }}</a>
+                            </li>
+                        {% endfor %}
+                    {% endif %}
+                {% endif %}
+            {% else %}
+                {% for page in 1..pages %}
+                    <li class="page-item {{ page == currentPage ? 'active' }}">
+                        <a href="{{ path(path, {page: page}) }}" class="page-link">{{ page }}</a>
+                    </li>
+                {% endfor %}
+            {% endif %}
+
+            {% if currentPage < pages %}
+                <li class="page-item">
+                    <a href="{{ path(path, {page: currentPage + 1}) }}" class="page-link">&gt;</a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <a href="{{ path(path, {page: currentPage + 1}) }}" class="page-link">&gt;</a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+{% endif %}

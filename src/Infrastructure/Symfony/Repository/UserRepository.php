@@ -7,6 +7,8 @@ use App\Domain\User\Repository\UserRepositoryInterface;
 use App\Infrastructure\Symfony\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\Tools\Pagination\Paginator;
+use Doctrine\ORM\QueryBuilder as ORMQueryBuilder;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -45,6 +47,44 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->getEntityManager()->flush();
     }
 
+    // For Admin Pages
+    private function paginate(ORMQueryBuilder $qb, int $page, int $limit): array {
+        $result = [];
+        $paginator = new Paginator($qb);
+        $data = $paginator->getQuery()->getResult();
+        if(empty($data)) {
+            return $result;
+        }
+
+        $total = $paginator->count();
+
+        // on calcule le nombre de résultats
+        $pages = ceil($total / $limit);
+        $result = [
+            'data' => $data,
+            'total' => $paginator->count(),
+            'pages' => $pages,
+            'page' => $page,
+            'limit' => $limit
+        ];
+
+        return $result;
+    }
+    public function findUsersPaginated(int $page, int $limit): array
+    {
+        $limit = abs($limit);
+        $query = $this->createQueryBuilder('u')
+            ->setMaxResults($limit)
+            ->setFirstResult($page * $limit - $limit)
+            ->orderBy('u.firstName', 'ASC')
+        ;
+        $results = $this->paginate($query, $page, $limit);
+        return $results;
+    }
+
+
+
+    // From Domain
 
     public function add(DomainUser $domainUser): void
     {
@@ -63,7 +103,6 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->getEntityManager()->persist($user);
         $this->getEntityManager()->flush();
     }
-
     public function remove(DomainUser $domainUser, bool $flush = false): void
     {
         $user = $this->findOneBy(['email' => $domainUser->getEmail()]);

@@ -1,0 +1,118 @@
+{% extends 'admin/clients/_breadcrumb.html.twig' %}
+
+{% block title %}{{ parent() }} - Liste des utilisateurs{% endblock %}
+{% block breadcrumb %}{{ parent() }} Utilisateurs{% endblock %}
+
+{% block header %}<h1>Liste des utilisateurs</h1>{% endblock %}
+{% block body_title %}Liste des utilisateurs ({{ users.total }}){% endblock %}
+
+{% block body %}
+    <div class="relative">
+        <button class="btn btn-bulk-action">
+            Actions groupées
+            <i class="material-icons">expand_more</i>
+        </button>
+        <div class="dropdown bulk-dropdown">
+            <a 
+                href="#" 
+                class="btn btn-delete"
+                {# action à déclencher (dans le back) #}
+                data-href="" 
+                data-action="PUT" 
+                data-token=""
+            >
+                <i class="material-icons">delete</i> 
+                Supprimer la sélection
+            </a>
+        </div>
+    </div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th></th>
+                <th>ID</th>
+                <th>Prénom</th>
+                <th>Nom</th>
+                <th>Email</th>
+                <th>Rôles</th>
+                <th>Vérifié</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users.data %}
+                <tr>
+                    <td>
+                        <div class="checkbox-js">
+                            <div class="bulk"></div>
+                        </div>
+                    </td>
+                    <td>{{ user.id }}</td>
+                    <td>{{ user.firstname }}</td>
+                    <td>{{ user.lastname }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>
+                        {% for role in user.roles %}
+                            {% if role == "ROLE_ADMIN" %}
+                                {% set name = "Administrateur" %}
+                                {% set color = "danger" %}
+                            {% elseif role == "ROLE_PRODUCT_ADMIN" %}
+                                {% set name = "Admin produits" %}
+                                {% set color = "info" %}
+                            {% else %}
+                                {% set name = "Membre" %}
+                                {% set color = "primary" %}
+                            {% endif %}
+                            <span class="badge bg-{{ color }}">{{ name }}</span>
+                        {% endfor %}
+                    </td>
+                    <td>
+                        <div class="form-check form-switch">
+                            <input 
+                                class="form-check-input" 
+                                type="checkbox" 
+                                role="switch" 
+                                id="switch{{ user.id }}" 
+                                {{ user.isVerified ? "checked" : "" }} 
+                                disabled
+                                {# action à déclencher (dans le back) #}
+                                data-href="{{ path('admin_users_edit_is_verified', {id: user.id}) }}" 
+                                data-action="PUT" 
+                                data-token="{{ csrf_token('editIsVerified' ~ user.id) }}"
+                            >
+                            <label class="form-check-label" for="switch{{ user.id }}"></label>
+                        </div>
+                    </td>
+                    <td>
+                        <a href="{{ path('admin_users_edit', {id: user.id }) }}" class="btn btn-success">
+                            <i class="material-icons">edit</i>
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% set path = 'admin_users_index' %}
+    {% set pages = users.pages %}
+    {% set currentPage = users.page %}
+    {% set entity = users %}
+    {% set entity_label = 'utilisateur' %}
+
+    {% include "admin/_partials/_admin_pagination.html.twig" %}
+    <script>
+        const disabledLinks = document.querySelectorAll('.pagination .page-item.disabled');
+        for(const link of disabledLinks) {
+            link.addEventListener('click', (e) => { e.preventDefault(); })
+        }
+    </script>
+{% endblock %}
+
+{% block scripts %}
+    {{ parent() }}
+    {# Link spécifique à la création des checkbox slide #}
+    <script src="{{ asset('assets/admin/js/api/updateAction.js') }}" defer></script>
+    <script src="{{ asset('assets/admin/js/components/checkboxToSwitchBtn.js') }}" defer></script>
+
+    {# Link spécifique à l'action sur les bulk checkbox (checkbox à sélection multiple) #}
+    <script src="{{ asset('assets/admin/js/components/actionGroupBtn.js') }}" defer></script>
+{% endblock %}

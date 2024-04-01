@@ -1,0 +1,33 @@
+{{ form_start(productForm) }}
+    {{ form_row(productForm.name) }}
+    {{ form_row(productForm.description) }}
+    {{ form_row(productForm.category) }}
+    {{ form_row(productForm.price) }}
+    {{ form_row(productForm.stock) }}
+    {{ form_row(productForm.images) }}
+
+    {# On affiche les images si on est en édition #}
+    {% if app.request.attributes.get('_route') == 'admin_products_edit' %}
+        <h2 class="form-title-images">Photos du produit</h2>
+        <div class='form-images'>
+            {% for image in product.images %}
+                <div class='form-images-image'>
+                    <img 
+                        src="{{ asset('assets/uploads/products/mini/300x300-' ~ image.name) }}" 
+                        alt="Image" 
+                        class="border border-secondary"
+                    >
+                    <a 
+                        class='btn-remove' 
+                        href="{{ path('admin_products_delete_image', {id: image.id}) }}" 
+                        data-delete 
+                        data-token="{{ csrf_token('delete' ~ image.id) }}">
+                            Supprimer
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <button type="submit" class="btn btn-primary my-2">{{ button_label|default('Ajouter') }}</button>
+{{ form_end(productForm) }}

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    {# Link externe - CSS - Fonts - Google (requis) #}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    {# Link externe - CSS - Fonts - IBM Plex Sans #}
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans&display=swap" rel="stylesheet">
+
+    {# Link externe - CSS - Fonts - Material icons #}
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css" rel="stylesheet">
+    
+    {# Link interne - CSS #}
+    <link rel="stylesheet" href="{{ asset('assets/admin/css/reset.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/admin/css/colors.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/admin/css/style.css') }}">
+
+    {# Autres styles #}
+    {% block stylesheets %}
+    {% endblock %}
+
+    <title>{% block title %}Administration{% endblock %}</title>
+</head>
+<body>
+    <header id="header">
+        <nav id="header_infos">
+            <a href="{{ path('admin_index') }}" id="header_logo"></a>
+            <span id="shop-version">0.0.1</span>
+            <div id="quick-access">Menu rapide</div>
+            <div id="header-search">Recherche</div>
+            <div id="header-right">
+                <a id="show-boutique" href="{{ path('app_home') }}">
+                    <i class="material-icons">visibility</i>
+                    Voir la boutique
+                </a>
+                <div id="notifications"><i class="material-icons">notifications_none</i></div>
+                <div id="menu_employee"><i class="material-icons">account_circle</i></div>
+            </div>
+        </nav>
+    </header>
+    <main>
+        {% include "admin/_partials/_admin_nav.html.twig" %}
+        <div id="main-container">
+            <header id="header-toolbar">
+                <span class="breadcrumb">{% block breadcrumb %}{% endblock %}</span>
+                {% block header %}{% endblock %}
+            </header>
+            <div id="main-content">
+                {% block main %}
+                    {% if app.user and app.user.isVerified == false %}
+                        <div class="alert alert-warning alert-dismissible" role="alert">
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                                <i class="material-icons">close</i>
+                            </button>
+                            <div class="alert-message">
+                                <strong>Votre compte n'est pas activé</strong>, <a href="{{ path('resend_verif')}}">renvoyer le lien d'activation</a>
+                            </div>
+                        </div>
+                    {% endif %}
+                    {% include "admin/_partials/_admin_flash.html.twig" %}
+                    <div id="main">
+                        <div class="card-header">
+                            <h3 class="card-header-title">
+                                {% block body_title %}{% endblock %}
+                            </h3>
+                            <i class="material-icons">settings</i>
+                        </div>
+                        {% block body %}{% endblock %}
+                    </div>
+                {% endblock %}
+            </div>
+        </div>
+    </main>
+
+    {# Link externe - material icons (partie JS) #}
+    <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js" defer></script>
+
+    {# Autres scripts #}
+    {% block scripts %}
+    {% endblock %}
+</body>
+</html>

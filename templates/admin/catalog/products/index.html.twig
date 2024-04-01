@@ -1,0 +1,46 @@
+{% extends 'admin/catalog/_breadcrumb.html.twig' %}
+
+{% block title %}{{ parent() }} - Liste des produits{% endblock %}
+{% block breadcrumb %}{{ parent() }} Produits {% endblock %}
+
+{% block header %}<h1>Liste des produits</h1>{% endblock %}
+{% block body_title %}Liste des produits ({{ products|length }}){% endblock %}
+
+{% block body %}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Photo</th>
+                <th>Nom</th>
+                <th>Prix</th>
+                <th>Stock</th>
+                <th>Catégorie</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for product in products %}
+                <tr>
+                    <td>{{ product.id }}</td>
+                    <td>
+                        <img 
+                            height="100" 
+                            src="{{ asset('assets/uploads/products/mini/300x300-' ~ product.images[0].name) }}" 
+                            class="card-img-top" 
+                            alt="{{ product.name }}" />
+                    </td>
+                    <td>{{ product.name }}</td>
+                    <td>{{ product.price / 100 }} €</td>
+                    <td>{{ product.stock }}</td>
+                    <td>{{ product.category.name }}</td>
+                    <td>
+                        <a href="{{ path('admin_products_edit', {id: product.id }) }}" class="btn btn-success">
+                            <i class="material-icons">edit</i>
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

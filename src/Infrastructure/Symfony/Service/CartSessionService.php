@@ -52,7 +52,7 @@ readonly class CartSessionService implements CartInterface
     {
         $session = $this->requestStack->getSession();
         $cart = $session->get('cart');
-        dump($cart);
+
         return $cart->getProductsCount();
     }
 }

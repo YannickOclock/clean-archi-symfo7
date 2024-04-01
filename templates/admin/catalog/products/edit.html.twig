@@ -1,0 +1,27 @@
+{% extends 'admin/catalog/_breadcrumb.html.twig' %}
+
+{% block title %}{{ parent() }} - Modifier un produit{% endblock %}
+{% block breadcrumb %}{{ parent() }} Produits &gt; Modifier un produit{% endblock %}
+
+{% block header %}<h1>Modifier un produit</h1>{% endblock %}
+{% block body_title %}Modification du produit n°{{ product.id }}{% endblock %}
+
+{% block body %}
+    {% include "admin/catalog/products/_form.html.twig" with {button_label: "Modifier"} %}
+{% endblock %}
+
+{% block stylesheets %}
+     {# Link interne - CSS - Nice select 2 #}
+    <link rel="stylesheet" href="{{ asset('assets/admin/css/nice-select2.css') }}">
+{% endblock %}
+
+{% block scripts %}
+    {{ parent() }}
+    {# Link externe - nice select 2 (partie JS) #}
+    <script src="{{ asset('assets/admin/js/nice-select2.js') }}" defer></script>
+    {# Link spécifique pour le select du form #}
+    <script src="{{ asset('assets/admin/js/select2-use.js') }}" defer></script>
+    {# Link spécifique pour la suppression des images #}
+    <script src="{{ asset('assets/admin/js/images.js')}}" defer></script>
+{% endblock %}
+

@@ -1,0 +1,67 @@
+{% set currentPath = app.request.attributes.get('_route') %}
+
+<nav id="navbar">
+    <ul>
+        <li
+                class="
+                link-levelone
+                {% if currentPath in ['admin_index'] %}
+                    link-active
+                {% endif %}
+            "
+        >
+            <a href="{{ path('admin_index') }}" class="{{ currentPath == 'admin_index' ? "link-active" }}">
+                <i class="material-icons mi-trending_up">trending_up</i>
+                Tableau de bord
+            </a>
+        </li>
+        <li class="category-title"><span class="title">Vendre</span></li>
+        <li 
+            class="
+                link-levelone
+            "
+        >
+            <a href="#">
+                <i class="material-icons mi-store">store</i>
+                Catalogue
+            </a>
+            <ul class="submenu">
+                <li class="link-level-two"><a>Produits</a></li>
+                <li class="link-level-two"><a>Ajouter un produit</a></li>
+                <li class="link-level-two"><a>Catégories</a></li>
+                <li class="link-level-two"><a>Ajouter une catégorie</a></li>
+            </ul>
+        </li>
+        <li
+                class="
+                link-levelone
+                {% if currentPath in ['admin_users_index'] %}
+                    link-active
+                {% endif %}
+            "
+        >
+            <a href="#">
+                <i class="material-icons mi-account_circle">account_circle</i>
+                Clients
+            </a>
+            <ul class="submenu">
+                <li class="link-level-two"><a href="{{ path('admin_users_index') }}" class="{{ currentPath == 'admin_users_index' ? "link-active" }}">Clients</a></li>
+            </ul>
+        </li>
+
+        {# Example #}
+        {# <li class="category-title"><span class="title">Autre</span></li>
+        <li class="link-levelone">
+            <a href="#">
+                <i class="material-icons mi-home">home</i>
+                Menu 1
+            </a>
+            <ul class="submenu">
+                <li class="link-level-two"><a href="#" >Sous-lien n°1</a></li>
+                <li class="link-level-two"><a href="#" >Sous-lien n°2</a></li>
+                <li class="link-level-two"><a href="#" >Sous-lien n°3</a></li>
+                <li class="link-level-two"><a href="#" >Sous-lien n°4</a></li>
+            </ul>
+        </li> #}
+    </ul>
+</nav>
