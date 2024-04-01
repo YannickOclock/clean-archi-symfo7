@@ -7,13 +7,13 @@
         <ul>
             <li><a href="{{ path('app_home') }}">Logo (accueil)</a></li>
         </ul>
-        <ul>
+        <ul class="nav_connection">
             {% if viewModel.username %}
                 <li>Welcome {{ viewModel.username }}</li>
                 <li><a href="{{ path('app_logout') }}">Se déconnecter</a></li>
             {% else %}
-                <li><a href="{{ path('app_login') }}">Connexion</a></li>
-                <li><a href="{{ path('app_register') }}">Créer un compte</a></li>
+                <li><a href="{{ path('app_login') }}" up-layer="new">Connexion</a></li>
+                <li><a href="{{ path('app_register') }}" up-layer="new">Créer un compte</a></li>
             {% endif %}
         </ul>
     </nav>

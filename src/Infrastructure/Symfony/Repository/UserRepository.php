@@ -5,10 +5,9 @@ namespace App\Infrastructure\Symfony\Repository;
 use App\Domain\User\Entity\User as DomainUser;
 use App\Domain\User\Repository\UserRepositoryInterface;
 use App\Infrastructure\Symfony\Entity\User;
+use App\Infrastructure\Symfony\Repository\Trait\PaginationTrait;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
-use Doctrine\ORM\Tools\Pagination\Paginator;
-use Doctrine\ORM\QueryBuilder as ORMQueryBuilder;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -25,6 +24,8 @@ use Symfony\Component\Uid\Uuid;
  */
 class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface, UserRepositoryInterface
 {
+    use PaginationTrait;
+
     public function __construct(
         private UserPasswordHasherInterface $passwordHasher,
         ManagerRegistry $registry,
@@ -48,28 +49,6 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     }
 
     // For Admin Pages
-    private function paginate(ORMQueryBuilder $qb, int $page, int $limit): array {
-        $result = [];
-        $paginator = new Paginator($qb);
-        $data = $paginator->getQuery()->getResult();
-        if(empty($data)) {
-            return $result;
-        }
-
-        $total = $paginator->count();
-
-        // on calcule le nombre de résultats
-        $pages = ceil($total / $limit);
-        $result = [
-            'data' => $data,
-            'total' => $paginator->count(),
-            'pages' => $pages,
-            'page' => $page,
-            'limit' => $limit
-        ];
-
-        return $result;
-    }
     public function findUsersPaginated(int $page, int $limit): array
     {
         $limit = abs($limit);
@@ -85,7 +64,6 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
 
     // From Domain
-
     public function add(DomainUser $domainUser): void
     {
         $user = new User();

@@ -3,6 +3,7 @@
 namespace App\Infrastructure\Symfony\Entity;
 
 use App\Infrastructure\Symfony\Entity\Trait\CreatedAtTrait;
+use App\Infrastructure\Symfony\Entity\Trait\SlugTrait;
 use App\Infrastructure\Symfony\Entity\Trait\UpdatedAtTrait;
 use App\Infrastructure\Symfony\Repository\CategoryRepository;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -15,6 +16,7 @@ use Symfony\Component\Uid\Uuid;
 #[ORM\Entity(repositoryClass: CategoryRepository::class)]
 class Category
 {
+    use SlugTrait;
     use CreatedAtTrait;
     use UpdatedAtTrait;
     #[ORM\Id]

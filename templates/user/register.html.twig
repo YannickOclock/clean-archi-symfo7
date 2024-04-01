@@ -1,6 +1,8 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
+    <h1 class="h3 mb-3 font-weight-normal">Register</h1>
+
     {%  block errors %}
         {% for violation in viewModel.violations %}
             {% for path, message in violation %}
