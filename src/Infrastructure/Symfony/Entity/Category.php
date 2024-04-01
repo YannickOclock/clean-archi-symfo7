@@ -7,6 +7,7 @@ use App\Infrastructure\Symfony\Entity\Trait\UpdatedAtTrait;
 use App\Infrastructure\Symfony\Repository\CategoryRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Types\UuidType;
 use Symfony\Component\Uid\Uuid;
@@ -28,10 +29,20 @@ class Category
     #[ORM\Column]
     private ?bool $active = null;
 
+    #[ORM\Column]
+    private ?int $order = null;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $description = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $imageName = null;
+
     #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'subCategories')]
     private ?self $parent = null;
 
     #[ORM\OneToMany(targetEntity: self::class, mappedBy: 'parent')]
+    #[ORM\OrderBy(["order" => "ASC"])]
     private Collection $subCategories;
 
     public function __construct()
@@ -65,6 +76,39 @@ class Category
     {
         $this->active = $active;
 
+        return $this;
+    }
+
+    public function getOrder(): ?int
+    {
+        return $this->order;
+    }
+
+    public function setOrder(?int $order): Category
+    {
+        $this->order = $order;
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(?string $description): Category
+    {
+        $this->description = $description;
+        return $this;
+    }
+
+    public function getImageName(): ?string
+    {
+        return $this->imageName;
+    }
+
+    public function setImageName(?string $imageName): Category
+    {
+        $this->imageName = $imageName;
         return $this;
     }
 

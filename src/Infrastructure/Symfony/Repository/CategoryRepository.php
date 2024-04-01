@@ -29,7 +29,16 @@ class CategoryRepository extends ServiceEntityRepository implements CategoryRepo
     public function findAllMenuCategories(): array
     {
         $categories = $this->findBy(['parent' => null]);
-        $categories = array_map(fn(Category $category) => $category->getName(), $categories);
+        $categories = array_map(function(Category $category) {
+            $subCategories = $category->getSubCategories()->map(function(Category $category) {
+                return $category->getName();
+            })->toArray();
+            return [
+                'name' => $category->getName(),
+                'subCategories' => $subCategories
+            ];
+        }, $categories);
+        dump($categories);
         return MenuCategory::createFromCategories($categories);
     }
 }
