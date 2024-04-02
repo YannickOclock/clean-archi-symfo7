@@ -36,7 +36,6 @@ class CategoryController extends AbstractController
     {
         $page = $request->query->getInt('page', 1);
         $categories = $categoryRepository->findSubCategoriesPaginated($category->getId(), $page, 50);
-        dump($categories);
         $categories['breadcrumbs'] = $this->getBreadCrumbs($categories["data"][0]);
         return $this->render('admin/catalog/categories/index.html.twig', [
             'categories' => $categories
@@ -60,8 +59,10 @@ class CategoryController extends AbstractController
             $image = $categoryForm->get('image')->getData();
             // upload de l'image
             $folder = 'categories';
-            $fichier = $pictureService->add($image, $folder, 250, 250);
-            $category->setImageName($fichier);
+            if($image !== null) {
+                $fichier = $pictureService->add($image, $folder, 250, 250);
+                $category->setImageName($fichier);
+            }
             // on génère le slug
             $slug = $slugger->slug($category->getName());
             $slug = strtolower($slug);
@@ -132,8 +133,10 @@ class CategoryController extends AbstractController
             $image = $categoryForm->get('image')->getData();
             // upload de l'image
             $folder = 'categories';
-            $fichier = $pictureService->add($image, $folder, 250, 250);
-            $category->setImageName($fichier);
+            if($image !== null) {
+                $fichier = $pictureService->add($image, $folder, 250, 250);
+                $category->setImageName($fichier);
+            }
             // on génère le slug
             $slug = $slugger->slug($category->getName());
             $slug = strtolower($slug);

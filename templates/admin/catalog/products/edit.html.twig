@@ -1,7 +1,11 @@
 {% extends 'admin/catalog/_breadcrumb.html.twig' %}
 
 {% block title %}{{ parent() }} - Modifier un produit{% endblock %}
-{% block breadcrumb %}{{ parent() }} Produits &gt; Modifier un produit{% endblock %}
+{% block breadcrumb %}
+    {{ parent() }}
+    <a href="{{ path('admin_products_index') }}">Produits</a> &gt;
+    Modifier un produit
+{% endblock %}
 
 {% block header %}<h1>Modifier un produit</h1>{% endblock %}
 {% block body_title %}Modification du produit n°{{ product.id }}{% endblock %}

@@ -1,7 +1,10 @@
 {% extends 'admin/catalog/_breadcrumb.html.twig' %}
 
 {% block title %}{{ parent() }} - Liste des produits{% endblock %}
-{% block breadcrumb %}{{ parent() }} Produits {% endblock %}
+{% block breadcrumb %}
+    {{ parent() }}
+    <a href="{{ path('admin_products_index') }}">Produits</a>
+{% endblock %}
 
 {% block header %}<h1>Liste des produits</h1>{% endblock %}
 {% block body_title %}Liste des produits ({{ products.total is defined ? products.total : '0' }}){% endblock %}

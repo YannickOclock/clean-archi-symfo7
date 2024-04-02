@@ -1,7 +1,11 @@
 {% extends 'admin/catalog/_breadcrumb.html.twig' %}
 
 {% block title %}{{ parent() }} - Modifier une catégorie{% endblock %}
-{% block breadcrumb %}{{ parent() }} Catégories &gt; Modifier une catégorie{% endblock %}
+{% block breadcrumb %}
+    {{ parent() }}
+    <a href="{{ path('admin_categories_index') }}">Catégories</a> &gt;
+    Modifier une catégorie
+{% endblock %}
 
 {% block header %}<h1>Modifier une catégorie</h1>{% endblock %}
 {% block body_title %}Modification de la catégorie n°{{ category.id }}{% endblock %}

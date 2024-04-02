@@ -1,7 +1,11 @@
 {% extends 'admin/clients/_breadcrumb.html.twig' %}
 
 {% block title %}{{ parent() }} - Modifier un utilisateur{% endblock %}
-{% block breadcrumb %}{{ parent() }} Utilisateurs &gt; Modifier un utilisateur{% endblock %}
+{% block breadcrumb %}
+    {{ parent() }}
+    <a href="{{ path('admin_users_index') }}">Utilisateurs</a> &gt;
+    Modifier un utilisateur
+{% endblock %}
 
 {% block header %}<h1>Modifier un utilisateur</h1>{% endblock %}
 {% block body_title %}Modification de l'utilisateur n°{{ user.id }}{% endblock %}

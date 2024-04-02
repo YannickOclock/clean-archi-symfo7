@@ -1,7 +1,10 @@
 {% extends 'admin/clients/_breadcrumb.html.twig' %}
 
 {% block title %}{{ parent() }} - Liste des utilisateurs{% endblock %}
-{% block breadcrumb %}{{ parent() }} Utilisateurs{% endblock %}
+{% block breadcrumb %}
+    {{ parent() }}
+    <a href="{{ path('admin_users_index') }}">Utilisateurs</a>
+{% endblock %}
 
 {% block header %}<h1>Liste des utilisateurs</h1>{% endblock %}
 {% block body_title %}Liste des utilisateurs ({{ users.total }}){% endblock %}
