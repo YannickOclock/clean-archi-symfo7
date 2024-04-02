@@ -2,16 +2,16 @@
 
 namespace App\Infrastructure\Symfony\Security\Voter;
 
-use App\Infrastructure\Symfony\Entity\User;
+use App\Infrastructure\Symfony\Entity\Product;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-class UserVoter extends Voter
+class ProductVoter extends Voter
 {
-    public const EDIT = 'USER_EDIT';
-    public const DELETE = 'USER_DELETE';
+    public const EDIT = 'PRODUCT_EDIT';
+    public const DELETE = 'PRODUCT_DELETE';
 
     private Security $security;
 
@@ -25,7 +25,7 @@ class UserVoter extends Voter
         if(!in_array($attribute, [self::EDIT, self::DELETE])) {
             return false;
         }
-        if(!$subject instanceof User) {
+        if(!$subject instanceof Product) {
             return false;
         }
         return true;
@@ -45,10 +45,10 @@ class UserVoter extends Voter
         switch($attribute) {
             case self::EDIT:
                 return $this->canEdit();
+                break;
             case self::DELETE:
                 return $this->canDelete();
-            default:
-                return false;
+                break;
         }
     }
 

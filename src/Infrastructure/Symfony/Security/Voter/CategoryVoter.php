@@ -20,18 +20,18 @@ class CategoryVoter extends Voter
         $this->security = $security;
     }
 
-    protected function supports(string $attribute, $category): bool
+    protected function supports(string $attribute, $subject): bool
     {
         if(!in_array($attribute, [self::EDIT, self::DELETE])) {
             return false;
         }
-        if(!$category instanceof Category) {
+        if(!$subject instanceof Category) {
             return false;
         }
         return true;
     }
 
-    protected function voteOnAttribute(string $attribute, $category, TokenInterface $token): bool
+    protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
     {
         $user = $token->getUser();
 

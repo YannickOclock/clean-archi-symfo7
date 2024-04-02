@@ -1,7 +1,8 @@
 {{ form_start(categoryForm) }}
     {{ form_row(categoryForm.name) }}
     {{ form_row(categoryForm.description) }}
-
+    {{ form_row(categoryForm.parent) }}
+    {{ form_row(categoryForm.active) }}
     {{ form_row(categoryForm.image) }}
 
     {# On affiche les images si on est en édition #}
@@ -23,7 +24,5 @@
         </div>
     {% endif %}
 
-    {{ form_row(categoryForm.parent) }}
-    {{ form_row(categoryForm.active) }}
     <button type="submit" class="btn btn-primary my-2">{{ button_label|default('Ajouter') }}</button>
 {{ form_end(categoryForm) }}

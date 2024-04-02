@@ -49,68 +49,74 @@
             </tr>
         </thead>
         <tbody>
-            {% for category in categories.data %}
-                <tr data-id="{{ category.id }}">
-                    <td>
-                        <div class="checkbox-js">
-                            <div class="bulk"></div>
-                        </div>
-                    </td>
-                    <td>{{ category.id }}</td>
-                    <td>{{ category.name }}</td>
-                    <td>{{ category.slug }}</td>
-                    <td class="order">{{ category.order }}</td>
-                    <td class="btn-positions">
-                        <a 
-                            href="#" 
-                            class="up {% if loop.first %}btn--hidden{% endif %}"
-                            {# action à déclencher (dans le back) #}
-                            data-href="{{ path('admin_categories_change_position', {id: category.id, position: 'up'}) }}" 
-                            data-action="PUT" 
-                            data-token="{{ csrf_token('changePosition' ~ category.id) }}"
-                        >
-                            <i class="material-icons">expand_less</i>
-                        </a>
-                        <a 
-                            href="#" 
-                            class="down {% if loop.last %}btn--hidden{% endif %}"
-                            {# action à déclencher (dans le back) #}
-                            data-href="{{ path('admin_categories_change_position', {id: category.id, position: 'down'}) }}" 
-                            data-action="PUT" 
-                            data-token="{{ csrf_token('changePosition' ~ category.id) }}"
-                        >
-                            <i class="material-icons">expand_more</i>
-                        </a>
-                    </td>
-                    <td>
-                        <div class="form-check form-switch">
-                            <input 
-                                class="form-check-input" 
-                                type="checkbox" 
-                                role="switch" 
-                                id="switch{{ category.id }}" 
-                                {{ category.active ? "checked" : "" }}
-                                disabled
+            {% if categories.data is defined %}
+                {% for category in categories.data %}
+                    <tr data-id="{{ category.id }}">
+                        <td>
+                            <div class="checkbox-js">
+                                <div class="bulk"></div>
+                            </div>
+                        </td>
+                        <td>{{ category.id }}</td>
+                        <td>{{ category.name }}</td>
+                        <td>{{ category.slug }}</td>
+                        <td class="order">{{ category.order }}</td>
+                        <td class="btn-positions">
+                            <a
+                                href="#"
+                                class="up {% if loop.first %}btn--hidden{% endif %}"
                                 {# action à déclencher (dans le back) #}
-                                data-href="{{ path('admin_categories_edit_is_published', {id: category.id}) }}" 
-                                data-action="PUT" 
-                                data-token="{{ csrf_token('editPublished' ~ category.id) }}"
+                                data-href="{{ path('admin_categories_change_position', {id: category.id, position: 'up'}) }}"
+                                data-action="PUT"
+                                data-token="{{ csrf_token('changePosition' ~ category.id) }}"
                             >
-                            <label class="form-check-label" for="switch{{ category.id }}"></label>
-                        </div>
-                    </td>
-                    <td>
-                        {% if category.subCategories|length %}
-                            <a href="{{ path('admin_categories_sub_index', {id: category.id }) }}" class="btn btn-success">
-                                <i class="material-icons">zoom_in</i>
+                                <i class="material-icons">expand_less</i>
                             </a>
-                        {% endif %}
-                        <a href="{{ path('admin_categories_edit', {id: category.id }) }}" class="btn btn-success">
-                            <i class="material-icons">edit</i>
-                        </a>
-                    </td>
+                            <a
+                                href="#"
+                                class="down {% if loop.last %}btn--hidden{% endif %}"
+                                {# action à déclencher (dans le back) #}
+                                data-href="{{ path('admin_categories_change_position', {id: category.id, position: 'down'}) }}"
+                                data-action="PUT"
+                                data-token="{{ csrf_token('changePosition' ~ category.id) }}"
+                            >
+                                <i class="material-icons">expand_more</i>
+                            </a>
+                        </td>
+                        <td>
+                            <div class="form-check form-switch">
+                                <input
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    role="switch"
+                                    id="switch{{ category.id }}"
+                                    {{ category.active ? "checked" : "" }}
+                                    disabled
+                                    {# action à déclencher (dans le back) #}
+                                    data-href="{{ path('admin_categories_edit_is_published', {id: category.id}) }}"
+                                    data-action="PUT"
+                                    data-token="{{ csrf_token('editPublished' ~ category.id) }}"
+                                >
+                                <label class="form-check-label" for="switch{{ category.id }}"></label>
+                            </div>
+                        </td>
+                        <td>
+                            {% if category.subCategories|length %}
+                                <a href="{{ path('admin_categories_sub_index', {id: category.id }) }}" class="btn btn-success">
+                                    <i class="material-icons">zoom_in</i>
+                                </a>
+                            {% endif %}
+                            <a href="{{ path('admin_categories_edit', {id: category.id }) }}" class="btn btn-success">
+                                <i class="material-icons">edit</i>
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="8" class="text-center">Aucune catégorie trouvée</td>
                 </tr>
-            {% endfor %}
+            {% endif %}
         </tbody>
     </table>
     {% set path = 'admin_categories_index' %}

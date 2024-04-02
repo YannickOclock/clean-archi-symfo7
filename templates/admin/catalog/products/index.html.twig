@@ -29,7 +29,7 @@
             </a>
         </div>
     </div>
-    <table class="table">
+    <table class="table table-products">
         <thead>
             <tr>
                 <th></th>
@@ -72,7 +72,7 @@
                                     type="checkbox" 
                                     role="switch" 
                                     id="switch{{ product.id }}" 
-                                    {{ product.published ? "checked" : "" }} 
+                                    {{ product.active ? "checked" : "" }}
                                     disabled
                                     {# action à déclencher (dans le back) #}
                                     data-href="{{ path('admin_products_edit_is_published', {id: product.id}) }}" 
@@ -107,7 +107,7 @@
                     </tr>
                 {% endfor %}
             {% else %}
-                <tr><td colspan="9">Il n'y a aucun produit dans la base !</td></tr>
+                <tr><td colspan="9">Aucun produit trouvé</td></tr>
             {% endif %}
         </tbody>
     </table>

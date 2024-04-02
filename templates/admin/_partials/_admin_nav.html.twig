@@ -29,8 +29,8 @@
                 Catalogue
             </a>
             <ul class="submenu">
-                <li class="link-level-two"><a>Produits</a></li>
-                <li class="link-level-two"><a>Ajouter un produit</a></li>
+                <li class="link-level-two"><a href="{{ path('admin_products_index') }}" class="{{ currentPath == 'admin_products_index' ? "link-active" }}" >Produits</a></li>
+                <li class="link-level-two"><a href="{{ path('admin_products_add') }}" class="{{ currentPath == 'admin_products_add' ? "link-active" }}" >Ajouter un produit</a></li>
                 <li class="link-level-two"><a href="{{ path('admin_categories_index') }}" class="{{ currentPath in ['admin_categories_index', 'admin_categories_sub_index'] ? "link-active" }}">Catégories</a></li>
                 <li class="link-level-two"><a href="{{ path('admin_categories_add') }}" class="{{ currentPath == 'admin_categories_add' ? "link-active" }}">Ajouter une catégorie</a></li>
             </ul>
