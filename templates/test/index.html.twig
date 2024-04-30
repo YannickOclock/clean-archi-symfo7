@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello HomeController!{% endblock %}
+
+{% block body %}
+    <h1>Page de test avec Doctrine</h1>
+
+    <h2>Articles</h2>
+    <div>
+        {% for post in viewModel.posts %}
+            <article>
+                <p>Post n°{{ post.id }}</p>
+                <h3>{{ post.title }}</h3>
+                <p>{{ post.content }}</p>
+            </article>
+        {% endfor %}
+    </div>
+{% endblock %}
